@@ -1,3 +1,9 @@
+# NSWRyan changes.
+* I added conf to WriteORCFile arguments.
+* With this change, user can specify which compression algorithm they want to use with the ORC file. 
+
+# Original README.md
+
 # javaorc
 ### by Ian Kaplan, www.topstonesoftware.com, iank@bearcave.com
 Javaorc is a Java library that makes writing and reading ORC files easy.

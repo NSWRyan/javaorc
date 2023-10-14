@@ -102,6 +102,7 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
     final String fileNamePath;
     final VectorizedRowBatch batch;
     final List<String> fieldNames;
+    final Configuration conf;
 
     /**
      * @param filePath the path to a file in the local file system.
@@ -110,6 +111,24 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
     public WriteORCFile(String filePath, TypeDescription schema) {
         this.fileNamePath = filePath;
         this.schema = schema;
+        conf = new Configuration();
+        batch = this.schema.createRowBatch();
+        fieldNames = schema.getFieldNames();
+    }
+
+    /**
+     * @param filePath the path to a file in the local file system.
+     * @param schema the ORC schema
+     * @param conf Hadoop conf, add compression option here
+     */
+    public WriteORCFile(String filePath, TypeDescription schema, Configuration conf) {
+        this.fileNamePath = filePath;
+        this.schema = schema;
+        if(conf==null){
+            this.conf=new Configuration();
+        }
+        else
+            this.conf = conf;
         batch = this.schema.createRowBatch();
         fieldNames = schema.getFieldNames();
     }
@@ -128,9 +147,8 @@ public class WriteORCFile extends ORCFileIO implements AutoCloseable {
         Writer writer;
         try {
             var filePath = new Path(fileNamePath);
-            var configuration = new Configuration();
             writer = OrcFile.createWriter(filePath,
-                    OrcFile.writerOptions(configuration)
+                    OrcFile.writerOptions(conf)
                             .setSchema(schema)
                             .overwrite(true)
             );
